@@ -1,0 +1,1160 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<!-- ============================================================
+     «ДЕКАБРЬСКИЙ ДНЕВНИК» — одностраничный продающий сайт
+     Скрапбукинг-альбомы ручной работы · чистые HTML5 + CSS3 + JS
+     Структура файла: СТИЛИ → РАЗМЕТКА СЕКЦИЙ → СКРИПТ → README
+============================================================ -->
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Скрапбукинг-альбомы ручной работы для декабрьских историй: декабрьский дневник, рождественский альбом, индивидуальные заказы.">
+<title>Декабрьский Дневник — скрапбукинг-альбомы ручной работы</title>
+<style>
+/* ================================================================
+   1 · ДИЗАЙН-ТОКЕНЫ И БАЗОВЫЕ СТИЛИ
+================================================================ */
+:root{
+  --bg:#F7FAF9;          /* снежно-белый — основной фон */
+  --bg-alt:#E9F4EE;      /* морозная дымка — чередование секций */
+  --surface:#FFFFFF;     /* карточки и формы */
+  --ink:#1E2A24;         /* основной текст (тёмная ель) */
+  --ink-soft:#4C5A52;    /* второстепенный текст, контраст AA */
+  --green:#1F6B4B;       /* новогодняя ель — акцент */
+  --green-dark:#0F3D2A;  /* глубокая хвоя — футер */
+  --red:#C0392B;         /* праздничный красный — CTA */
+  --red-dark:#97271E;
+  --gold:#D4A62E;       /* ёлочное золото — только декор */
+  --line:#DCE7DF;       /* тонкие рамки */
+  --shadow:0 10px 30px rgba(14,42,30,.10);
+  --radius:18px;
+}
+*,*::before,*::after{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0;background:var(--bg);color:var(--ink);
+  font-family:"Segoe UI",system-ui,-apple-system,"Helvetica Neue",Arial,sans-serif;
+  font-size:16px;line-height:1.65;-webkit-font-smoothing:antialiased;
+}
+img,svg{max-width:100%}
+h1,h2,h3{margin:0 0 .5em;line-height:1.2;font-weight:700;letter-spacing:-.01em}
+p{margin:0 0 1em}
+a{color:var(--green);text-decoration:none;transition:color .25s ease}
+a:hover{color:var(--red)}
+ul{margin:0;padding:0;list-style:none}
+button{font-family:inherit}
+:focus-visible{outline:3px solid var(--gold);outline-offset:2px;border-radius:4px}
+section{scroll-margin-top:76px} /* якоря не прячутся под липкой шапкой */
+
+.container{max-width:1120px;margin:0 auto;padding:0 20px}
+.section{padding:64px 0}
+.section--alt{background:var(--bg-alt)}
+.section__head{max-width:640px;margin:0 auto 40px;text-align:center}
+.section__tag{
+  display:inline-block;margin-bottom:10px;
+  font-size:.78rem;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--red);
+}
+.section__title{font-size:clamp(1.6rem,4.5vw,2.3rem)}
+.section__lead{color:var(--ink-soft);margin:0}
+
+/* --- Кнопки --- */
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:8px;
+  border:none;border-radius:999px;cursor:pointer;
+  padding:14px 28px;font-size:1rem;font-weight:600;
+  transition:transform .25s ease,box-shadow .25s ease,background-color .25s ease,color .25s ease;
+}
+.btn--primary{background:var(--red);color:#fff;box-shadow:0 6px 18px rgba(192,57,43,.30)}
+.btn--primary:hover{background:var(--red-dark);transform:translateY(-2px);box-shadow:0 12px 26px rgba(192,57,43,.35)}
+.btn--primary:active{transform:translateY(0)}
+.btn--ghost{background:transparent;color:var(--green);border:2px solid var(--green)}
+.btn--ghost:hover{background:var(--green);color:#fff;transform:translateY(-2px)}
+.btn--block{width:100%}
+
+/* ================================================================
+   2 · ШАПКА И НАВИГАЦИЯ (mobile first)
+================================================================ */
+.header{
+  position:sticky;top:0;z-index:50;
+  background:rgba(247,250,249,.94);
+  backdrop-filter:blur(8px);
+  border-bottom:1px solid var(--line);
+}
+.header__inner{
+  position:relative;display:flex;align-items:center;justify-content:space-between;gap:16px;
+  padding:14px 0;
+}
+.logo{display:flex;align-items:center;gap:10px;color:var(--ink);font-weight:700}
+.logo__mark{width:38px;height:38px;flex:none}
+.logo__name{font-size:1.02rem;line-height:1.15}
+.logo__name small{
+  display:block;font-weight:400;font-size:.68rem;
+  letter-spacing:.09em;text-transform:uppercase;color:var(--ink-soft);
+}
+
+.header__actions{display:flex;align-items:center;gap:10px}
+.cart-btn{
+  position:relative;display:inline-flex;align-items:center;justify-content:center;
+  width:44px;height:44px;border-radius:50%;
+  background:var(--surface);border:1.5px solid var(--line);color:var(--ink);cursor:pointer;
+  transition:border-color .25s ease,transform .25s ease;
+}
+.cart-btn:hover{border-color:var(--gold);transform:translateY(-2px)}
+.cart-btn svg{width:20px;height:20px}
+.cart-btn__count{
+  position:absolute;top:-5px;right:-5px;min-width:20px;height:20px;padding:0 5px;
+  display:flex;align-items:center;justify-content:center;
+  border-radius:999px;background:var(--red);color:#fff;
+  font-size:.72rem;font-weight:700;line-height:1;
+}
+
+.burger{
+  display:inline-flex;flex-direction:column;justify-content:center;gap:5px;
+  width:44px;height:44px;padding:10px;background:none;border:none;cursor:pointer;
+}
+.burger span{
+  display:block;height:2px;border-radius:2px;background:var(--ink);
+  transition:transform .3s ease,opacity .3s ease;
+}
+.header--open .burger span:nth-child(1){transform:translateY(7px) rotate(45deg)}
+.header--open .burger span:nth-child(2){opacity:0}
+.header--open .burger span:nth-child(3){transform:translateY(-7px) rotate(-45deg)}
+
+.nav{
+  display:none;
+  position:absolute;top:calc(100% + 14px);left:-20px;right:-20px;
+  flex-direction:column;align-items:stretch;
+  background:var(--bg);border-bottom:1px solid var(--line);
+  padding:10px 20px 20px;box-shadow:var(--shadow);
+}
+.header--open .nav{display:flex}
+.nav a{padding:12px 14px;border-radius:12px;font-size:1rem;color:var(--ink-soft)}
+.nav a:hover{color:var(--green);background:rgba(31,107,75,.08)}
+
+@media (min-width:920px){
+  .burger{display:none}
+  .nav{
+    display:flex;position:static;flex-direction:row;align-items:center;gap:2px;
+    background:none;border:none;box-shadow:none;padding:0;
+  }
+  .nav a{padding:8px 12px;font-size:.95rem}
+}
+/* ================================================================
+   3 · ГЕРОЙ (первый экран)
+================================================================ */
+.hero{position:relative;overflow:hidden}
+.hero::before{ /* мягкое золотое сияние */
+  content:"";position:absolute;top:-120px;right:-120px;width:420px;height:420px;
+  background:radial-gradient(circle,rgba(212,166,46,.16),transparent 65%);
+}
+.hero__inner{
+  position:relative;display:grid;gap:40px;align-items:center;
+  padding:72px 0 88px;
+}
+.hero__badge{
+  display:inline-flex;align-items:center;gap:8px;margin-bottom:18px;
+  padding:7px 14px;border-radius:999px;
+  background:var(--surface);border:1px solid var(--line);
+  font-size:.85rem;font-weight:600;color:var(--green);
+}
+.hero__title{font-size:clamp(2.1rem,7vw,3.4rem);margin-bottom:.4em}
+.hero__title em{font-style:normal;color:var(--red)}
+.hero__sub{
+  font-size:clamp(1.02rem,2.4vw,1.18rem);color:var(--ink-soft);max-width:480px;
+}
+.hero__actions{display:flex;flex-wrap:wrap;gap:14px;margin:26px 0 18px}
+.hero__note{display:flex;align-items:center;gap:8px;margin:0;font-size:.88rem;color:var(--ink-soft)}
+.hero__note svg{width:16px;height:16px;flex:none;color:var(--green)}
+
+.hero__art{position:relative;width:100%;max-width:460px;margin:0 auto}
+.hero__card{
+  background:var(--surface);border:1px solid var(--line);border-radius:22px;
+  box-shadow:var(--shadow);padding:16px;transform:rotate(-2deg);
+  transition:transform .45s ease,box-shadow .45s ease;
+}
+.hero__card:hover{transform:rotate(0deg) scale(1.02)}
+.hero__card svg{border-radius:14px}
+.hero__chip{
+  position:absolute;display:flex;align-items:center;gap:8px;
+  padding:9px 14px;border-radius:999px;
+  background:var(--surface);border:1px solid var(--line);box-shadow:var(--shadow);
+  font-size:.83rem;font-weight:600;color:var(--ink);
+}
+.hero__chip--1{left:-6px;bottom:18%;transform:rotate(3deg)}
+.hero__chip--2{right:-4px;bottom:6%;transform:rotate(-2deg)}
+.hero__chip .dot{width:8px;height:8px;border-radius:50%;flex:none}
+
+@media (min-width:920px){
+  .hero__inner{grid-template-columns:1.05fr .95fr;gap:56px;padding:88px 0 104px}
+  .hero__art{margin:0}
+}
+
+/* ================================================================
+   4 · СЕТКИ И УНИВЕРСАЛЬНЫЕ КАРТОЧКИ
+================================================================ */
+.grid{display:grid;gap:20px}
+.grid--2,.grid--3{grid-template-columns:1fr}
+@media (min-width:640px){.grid--2,.grid--3{grid-template-columns:repeat(2,1fr)}}
+@media (min-width:960px){.grid--3{grid-template-columns:repeat(3,1fr)}}
+
+.card{
+  display:flex;flex-direction:column;
+  background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);
+  overflow:hidden;box-shadow:0 4px 14px rgba(14,42,30,.06);
+  transition:transform .3s ease,box-shadow .3s ease;
+}
+.card:hover{transform:translateY(-6px);box-shadow:var(--shadow)}
+.card__ph{
+  position:relative;aspect-ratio:4/3;overflow:hidden;
+  display:flex;align-items:center;justify-content:center;color:#63796D;
+}
+.card__ph svg{width:44px;height:44px;opacity:.85}
+.ph--a{background:linear-gradient(135deg,#E9F4EE,#CFE3D7)}
+.ph--b{background:linear-gradient(135deg,#EAF3FA,#D3E4F2)}
+.ph--c{background:linear-gradient(135deg,#FBEEEB,#F2D9D3)}
+.ph--green{background:linear-gradient(135deg,#E1EEE6,#C6E2D0)}
+.card__body{display:flex;flex-direction:column;gap:8px;padding:20px;flex:1}
+.card__title{font-size:1.12rem;margin:0}
+.card__text{color:var(--ink-soft);font-size:.95rem;margin:0}
+/* ================================================================
+   5 · ФОРМЫ И СОСТОЯНИЯ ПОЛЕЙ
+================================================================ */
+.form{
+  display:grid;gap:16px;
+  background:var(--surface);border:1px solid var(--line);
+  border-radius:var(--radius);box-shadow:var(--shadow);padding:24px;
+}
+.field label{display:block;margin-bottom:6px;font-size:.9rem;font-weight:700}
+.field input,.field select,.field textarea{
+  width:100%;padding:12px 14px;
+  border:1.5px solid var(--line);border-radius:12px;
+  background:var(--bg);color:var(--ink);font:inherit;
+  transition:border-color .25s ease,box-shadow .25s ease;
+}
+.field textarea{resize:vertical;min-height:96px}
+.field input:focus,.field select:focus,.field textarea:focus{
+  outline:none;border-color:var(--green);box-shadow:0 0 0 3px rgba(31,107,75,.15);
+}
+.field__error{display:none;margin:6px 0 0;font-size:.85rem;color:var(--red)}
+.field--error input,.field--error textarea{border-color:var(--red)}
+.field--error .field__error{display:block}
+.form__hint{margin:0;font-size:.85rem;color:var(--ink-soft);text-align:center}
+.form__status{
+  display:none;margin:0;padding:12px 16px;border-radius:12px;text-align:center;
+  background:#E2F1E8;color:#0F3D2A;font-weight:600;font-size:.95rem;
+}
+.form__status--ok{display:block;animation:pop .35s ease}
+
+/* --- Секция «Индивидуальный заказ» --- */
+.custom__grid{display:grid;gap:36px;align-items:start}
+.ticks{display:grid;gap:10px;margin:0 0 22px}
+.ticks li{position:relative;padding-left:28px;color:var(--ink-soft)}
+.ticks li::before{content:"✓";position:absolute;left:2px;color:var(--green);font-weight:700}
+.custom__meta{
+  display:inline-block;padding:10px 16px;border-radius:12px;
+  background:rgba(212,166,46,.14);font-size:.9rem;font-weight:600;color:var(--ink);
+}
+@media (min-width:960px){.custom__grid{grid-template-columns:1fr 1fr;gap:64px}}
+
+/* ================================================================
+   6 · МОДАЛЬНОЕ ОКНО
+================================================================ */
+.modal{
+  position:fixed;inset:0;z-index:100;
+  display:none;align-items:center;justify-content:center;padding:20px;
+}
+.modal--open{display:flex}
+.modal__backdrop{position:absolute;inset:0;background:rgba(14,42,30,.55)}
+.modal__box{
+  position:relative;max-width:430px;width:100%;
+  background:var(--surface);border:1px solid var(--line);border-radius:22px;
+  box-shadow:var(--shadow);padding:34px 28px 28px;text-align:center;
+  animation:pop .35s ease;
+}
+.modal__close{
+  position:absolute;top:10px;right:10px;width:38px;height:38px;
+  display:flex;align-items:center;justify-content:center;
+  border:none;border-radius:50%;background:none;cursor:pointer;
+  font-size:1.05rem;color:var(--ink-soft);
+  transition:background-color .25s ease,color .25s ease;
+}
+.modal__close:hover{background:var(--bg-alt);color:var(--ink)}
+.modal__icon{
+  width:64px;height:64px;margin:0 auto 16px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  background:rgba(31,107,75,.12);color:var(--green);
+}
+.modal__icon svg{width:30px;height:30px}
+@keyframes pop{from{opacity:0;transform:translateY(14px) scale(.96)}to{opacity:1;transform:none}}
+/* ================================================================
+   7 · «О НАС»
+================================================================ */
+.about__grid{display:grid;gap:36px;align-items:center}
+.about__photo{border-radius:var(--radius);border:1px solid var(--line);box-shadow:var(--shadow)}
+.about__photo svg{width:72px;height:72px}
+.about__stats{display:flex;flex-wrap:wrap;gap:12px;margin-top:20px}
+.stat{padding:10px 16px;border-radius:12px;background:var(--surface);border:1px solid var(--line);font-size:.88rem;color:var(--ink-soft)}
+.stat b{display:block;font-size:1.25rem;color:var(--red)}
+@media (min-width:960px){.about__grid{grid-template-columns:.9fr 1.1fr;gap:56px}}
+
+/* ================================================================
+   8 · «КОЛЛЕКЦИЯ» (карточки товаров)
+================================================================ */
+.product__footer{
+  display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;
+  margin-top:auto;padding-top:6px;
+}
+.product__price{font-size:1.15rem;font-weight:700;color:var(--ink)}
+.product__price s{margin-left:8px;color:var(--ink-soft);font-weight:400;font-size:.9rem}
+.product .btn{padding:10px 20px;font-size:.92rem}
+.btn--added{background:var(--green);box-shadow:none}
+
+/* ================================================================
+   9 · «ПОЧЕМУ ВЫБИРАЮТ НАС»
+================================================================ */
+.feature{
+  display:flex;flex-direction:column;align-items:center;text-align:center;
+  padding:28px 20px;background:var(--surface);border:1px solid var(--line);
+  border-radius:var(--radius);
+  transition:transform .3s ease,box-shadow .3s ease;
+}
+.feature:hover{transform:translateY(-6px);box-shadow:var(--shadow)}
+.feature__icon{
+  width:64px;height:64px;margin-bottom:10px;border-radius:50%;flex:none;
+  display:flex;align-items:center;justify-content:center;
+  background:linear-gradient(135deg,rgba(31,107,75,.12),rgba(212,166,46,.16));
+  color:var(--green);
+}
+.feature__icon svg{width:28px;height:28px}
+.feature h3{font-size:1.02rem;margin:0 0 4px}
+.feature p{margin:0;font-size:.9rem;color:var(--ink-soft)}
+
+/* ================================================================
+   10 · «КАК ЭТО РАБОТАЕТ»
+================================================================ */
+.step{
+  position:relative;padding:28px 24px;
+  background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);
+  transition:transform .3s ease,box-shadow .3s ease;
+}
+.step:hover{transform:translateY(-6px);box-shadow:var(--shadow)}
+.step__num{
+  width:44px;height:44px;margin-bottom:14px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  background:var(--green);color:#fff;font-weight:700;
+}
+.step h3{font-size:1.05rem}
+.step p{margin:0;color:var(--ink-soft);font-size:.93rem}
+@media (min-width:960px){
+  .steps .grid{gap:28px}
+  .steps .step:not(:last-child)::after{
+    content:"";position:absolute;top:50px;right:-25px;width:24px;height:2px;
+    background:var(--gold);border-radius:2px;
+  }
+}
+
+/* ================================================================
+   11 · «ОТЗЫВЫ»
+================================================================ */
+.review{
+  display:flex;flex-direction:column;gap:12px;
+  padding:24px;background:var(--surface);border:1px solid var(--line);
+  border-radius:var(--radius);
+  transition:transform .3s ease,box-shadow .3s ease;
+}
+.review:hover{transform:translateY(-6px);box-shadow:var(--shadow)}
+.review__stars{color:var(--gold);letter-spacing:2px;font-size:.95rem}
+.review__text{margin:0;font-size:.97rem}
+.review__author{display:flex;align-items:center;gap:12px;margin-top:auto}
+.review__ava{
+  width:44px;height:44px;flex:none;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  background:var(--green);color:#fff;font-weight:700;
+}
+.review__name{font-weight:700;font-size:.95rem;line-height:1.25}
+.review__meta{font-size:.83rem;color:var(--ink-soft)}
+
+/* ================================================================
+   12 · «КОНТАКТЫ» И ФУТЕР
+================================================================ */
+.contacts__grid{display:grid;gap:36px}
+.contacts__list{display:grid;gap:14px}
+.contacts__list li{display:flex;gap:12px;align-items:flex-start;color:var(--ink-soft)}
+.contacts__list svg{width:20px;height:20px;flex:none;margin-top:3px;color:var(--red)}
+.contacts__list strong{color:var(--ink)}
+@media (min-width:960px){.contacts__grid{grid-template-columns:.9fr 1.1fr;gap:64px}}
+
+.footer{background:var(--green-dark);color:#E6F1EA;padding:44px 0 28px}
+.footer a{color:#E9F4EE}
+.footer a:hover{color:#fff}
+.footer__grid{display:grid;gap:28px}
+.footer__brand{display:flex;align-items:center;gap:10px;font-weight:700}
+.footer__brand svg{width:34px;height:34px}
+.footer__tag{margin:8px 0 0;font-size:.88rem;color:#AFC7B8}
+.footer__social{display:flex;flex-wrap:wrap;gap:10px}
+.footer__social a{
+  padding:8px 16px;border:1px solid rgba(230,241,234,.35);border-radius:999px;
+  font-size:.88rem;
+  transition:background-color .25s ease,border-color .25s ease,transform .25s ease;
+}
+.footer__social a:hover{
+  background:rgba(230,241,234,.12);border-color:rgba(230,241,234,.7);transform:translateY(-2px);
+}
+.footer__legal{display:grid;gap:8px;font-size:.88rem}
+.footer__link{border-bottom:1px dashed rgba(230,241,234,.5)}
+.footer__copy{margin:0;color:#AFC7B8}
+@media (min-width:760px){
+  .footer__grid{grid-template-columns:1fr auto 1fr;align-items:center}
+  .footer__social{justify-content:center}
+  .footer__legal{text-align:right;justify-items:end}
+}
+
+/* ================================================================
+   13 · АНИМАЦИЯ ПОЯВЛЕНИЯ И ДОСТУПНОСТЬ
+================================================================ */
+.reveal{opacity:0;transform:translateY(24px);transition:opacity .6s ease,transform .6s ease}
+.reveal--visible{opacity:1;transform:none}
+@media (prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  *,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important}
+  .reveal{opacity:1;transform:none}
+}
+</style>
+</head>
+<body>
+
+<!-- ================================================================
+     СПРАЙТ ИКОНОК (символы переиспользуются через <use>)
+================================================================ -->
+<svg style="display:none" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <symbol id="i-photo" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
+      <rect x="3" y="5" width="18" height="14" rx="3"/>
+      <circle cx="9" cy="10" r="1.8" fill="currentColor" stroke="none"/>
+      <path d="M5.5 16.5l3.5-3.5 3 3 2.5-2.5 4 4" stroke-linejoin="round"/>
+    </symbol>
+    <symbol id="i-heart" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round">
+      <path d="M12 20s-7-4.5-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.5-7 10-7 10z"/>
+    </symbol>
+    <symbol id="i-leaf" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round">
+      <path d="M6 18C6 10 12 4 20 4c0 8-6 14-14 14z"/>
+      <path d="M6 18c3-3 6-6 9-9" stroke-linecap="round"/>
+    </symbol>
+    <symbol id="i-pencil" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round">
+      <path d="M4 20l4-1L19 8l-3-3L5 16l-1 4z"/><path d="M14 5l3 3"/>
+    </symbol>
+    <symbol id="i-gift" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round">
+      <path d="M3 8h18v4H3z"/><path d="M5 12h14v8H5z"/><path d="M12 8v12"/>
+      <path d="M12 8c-2-4-7-3-6 0 1 3 6 0 6 0zm0 0c2-4 7-3 6 0-1 3-6 0-6 0z"/>
+    </symbol>
+    <symbol id="i-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M4 12.5l5 5L20 6.5"/>
+    </symbol>
+    <symbol id="i-cart" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round">
+      <path d="M6 7h12l1.5 12.5a1 1 0 0 1-1 1.1H5.5a1 1 0 0 1-1-1.1L6 7z"/>
+      <path d="M9 7V5.5a3 3 0 0 1 6 0V7" stroke-linecap="round"/>
+    </symbol>
+    <symbol id="i-phone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round">
+      <path d="M6 3h4l2 5-2.5 1.5a12 12 0 0 0 5 5L16 12l5 2v4a2 2 0 0 1-2 2C10 20 4 14 4 5a2 2 0 0 1 2-2z"/>
+    </symbol>
+    <symbol id="i-mail" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round">
+      <rect x="3" y="5" width="18" height="14" rx="3"/><path d="M4 7l8 6 8-6"/>
+    </symbol>
+    <symbol id="i-pin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round">
+      <path d="M12 21s-7-6-7-11a7 7 0 0 1 14 0c0 5-7 11-7 11z"/><circle cx="12" cy="10" r="2.5"/>
+    </symbol>
+    <symbol id="i-clock" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round">
+      <circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2"/>
+    </symbol>
+  </defs>
+</svg>
+
+<!-- ================================================================
+     ШАПКА САЙТА
+================================================================ -->
+<header class="header" id="top">
+  <div class="container header__inner">
+    <a class="logo" href="#top" aria-label="Декабрьский Дневник — на главную">
+      <svg class="logo__mark" viewBox="0 0 40 40" aria-hidden="true">
+        <rect x="4" y="7" width="32" height="26" rx="5" fill="#1F6B4B"/>
+        <rect x="8" y="11" width="24" height="18" rx="3" fill="#F7FAF9"/>
+        <path d="M20 14l1.8 3.6 4 .6-2.9 2.8.7 4-3.6-1.9-3.6 1.9.7-4-2.9-2.8 4-.6z" fill="#D4A62E"/>
+        <path d="M12 26c1.5-3 4-3 5.5 0" stroke="#C0392B" stroke-width="1.6" stroke-linecap="round" fill="none"/>
+      </svg>
+      <span class="logo__name">Декабрьский Дневник<small>альбомы ручной работы</small></span>
+    </a>
+
+    <nav class="nav" id="nav" aria-label="Основная навигация">
+      <a href="#ideas">Идеи</a>
+      <a href="#custom">Индивидуальный заказ</a>
+      <a href="#about">О нас</a>
+      <a href="#collection">Коллекция</a>
+      <a href="#how">Как это работает</a>
+      <a href="#reviews">Отзывы</a>
+      <a href="#contacts">Контакты</a>
+    </nav>
+
+    <div class="header__actions">
+      <button class="cart-btn" id="cartBtn" type="button" aria-label="Корзина">
+        <svg aria-hidden="true"><use href="#i-cart"/></svg>
+        <span class="cart-btn__count" id="cartCount">0</span>
+      </button>
+      <button class="burger" id="burger" type="button" aria-label="Меню" aria-expanded="false" aria-controls="nav">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </div>
+</header>
+
+<main>
+<!-- ================================================================
+     ПЕРВЫЙ ЭКРАН (герой)
+================================================================ -->
+<section class="hero" id="hero">
+  <div class="container hero__inner">
+    <div class="hero__text">
+      <span class="hero__badge">✦ Новогодняя коллекция 2026</span>
+      <h1 class="hero__title">Сохрани свои <em>мгновения</em></h1>
+      <p class="hero__sub">Скрапбукинг альбомы ручной работы — для декабрьских историй, которые хочется пересматривать каждый год.</p>
+      <div class="hero__actions">
+        <a href="#collection" class="btn btn--primary">Смотреть коллекцию</a>
+        <a href="#custom" class="btn btn--ghost">Индивидуальный заказ</a>
+      </div>
+      <p class="hero__note">
+        <svg aria-hidden="true"><use href="#i-check"/></svg>
+        Подарочная упаковка и рукописная открытка — к каждому альбому
+      </p>
+    </div>
+
+    <div class="hero__art">
+      <div class="hero__card">
+        <svg viewBox="0 0 420 330" role="img" aria-label="Иллюстрация: новогодний скрапбукинг-альбом с фото и декором">
+          <circle cx="215" cy="165" r="150" fill="#E9F4EE"/>
+          <!-- обложка альбома -->
+          <rect x="60" y="50" width="300" height="230" rx="18" fill="#1F6B4B"/>
+          <rect x="60" y="50" width="300" height="230" rx="18" fill="none" stroke="#0F3D2A" stroke-width="3"/>
+          <!-- страница альбома -->
+          <rect x="78" y="68" width="264" height="194" rx="12" fill="#F7FAF9"/>
+          <!-- фото-слот 1: зимний пейзаж -->
+          <rect x="94" y="86" width="112" height="86" rx="8" fill="#CFE3D7"/>
+          <circle cx="122" cy="110" r="9" fill="#D4A62E" opacity=".8"/>
+          <path d="M94 152l24-26 18 18 26-30 44 42v8a8 8 0 0 1-8 8H102a8 8 0 0 1-8-8z" fill="#1F6B4B" opacity=".5"/>
+          <rect x="140" y="74" width="34" height="12" rx="2" fill="#D4A62E" opacity=".5" transform="rotate(-8 157 80)"/>
+          <!-- фото-слот 2: закат -->
+          <rect x="216" y="86" width="112" height="86" rx="8" fill="#D3E4F2"/>
+          <circle cx="248" cy="118" r="10" fill="#F7FAF9"/>
+          <path d="M216 152l30-32 22 24 18-20 42 44v0a8 8 0 0 1-8 8H224a8 8 0 0 1-8-8z" fill="#C0392B" opacity=".4"/>
+          <rect x="252" y="74" width="34" height="12" rx="2" fill="#C0392B" opacity=".45" transform="rotate(6 269 80)"/>
+          <!-- кармашки для фото -->
+          <rect x="94" y="188" width="112" height="60" rx="8" fill="#F2F9F5" stroke="#DCE7DF"/>
+          <rect x="216" y="188" width="112" height="60" rx="8" fill="#F2F9F5" stroke="#DCE7DF"/>
+          <path d="M130 212h40M124 224h52M256 212h44M262 224h32" stroke="#C7DCCF" stroke-width="3" stroke-linecap="round"/>
+          <!-- остролист -->
+          <path d="M330 248q-26-4-38-26 24-8 38 6 14 8 0 20z" fill="#0F3D2A"/>
+          <path d="M338 250q-2-28 16-44 14 20 6 44-10 12-22 0z" fill="#1F6B4B"/>
+          <circle cx="332" cy="254" r="6" fill="#C0392B"/>
+          <circle cx="344" cy="258" r="6" fill="#C0392B"/>
+          <circle cx="352" cy="248" r="6" fill="#C0392B"/>
+          <!-- снежинки -->
+          <g stroke="#D4A62E" stroke-width="2.4" stroke-linecap="round" fill="none">
+            <path d="M70 30v18M61 39h18M64 33l12 12M76 33l-12 12"/>
+            <path d="M368 34v14M361 41h14M364 37l8 8M372 37l-8 8"/>
+            <path d="M40 250v14M33 257h14"/>
+          </g>
+        </svg>
+      </div>
+      <span class="hero__chip hero__chip--1"><span class="dot" style="background:#1F6B4B"></span>ручная работа</span>
+      <span class="hero__chip hero__chip--2"><span class="dot" style="background:#D4A62E"></span>эко-материалы</span>
+    </div>
+  </div>
+</section>
+
+<!-- ================================================================
+     ИДЕИ ДЛЯ АЛЬБОМОВ — 3 карточки
+================================================================ -->
+<section class="section section--alt" id="ideas">
+  <div class="container">
+    <div class="section__head reveal">
+      <span class="section__tag">Идеи для альбомов</span>
+      <h2 class="section__title">С чего начинается ваша история</h2>
+      <p class="section__lead">Три готовых формата — выберите близкий или соберём свой, с нуля.</p>
+    </div>
+
+    <div class="grid grid--3">
+      <article class="card reveal">
+        <div class="card__ph ph--a"><svg aria-hidden="true"><use href="#i-photo"/></svg></div>
+        <div class="card__body">
+          <h3 class="card__title">Декабрьский дневник</h3>
+          <p class="card__text">Формат «1–24 декабря»: кармашки для фото, билетов и пары строк о каждом дне.</p>
+        </div>
+      </article>
+
+      <article class="card reveal">
+        <div class="card__ph ph--b"><svg aria-hidden="true"><use href="#i-photo"/></svg></div>
+        <div class="card__body">
+          <h3 class="card__title">Рождественский альбом</h3>
+          <p class="card__text">Семейная классика: гирлянды, остролист и место для фото большого застолья.</p>
+        </div>
+      </article>
+
+      <article class="card reveal">
+        <div class="card__ph ph--c"><svg aria-hidden="true"><use href="#i-photo"/></svg></div>
+        <div class="card__body">
+          <h3 class="card__title">Мой Новый Год</h3>
+          <p class="card__text">Личный альбом о традициях, мечтах и людях, с которыми встречаешь 31 декабря.</p>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>
+<!-- ================================================================
+     ИНДИВИДУАЛЬНЫЙ ЗАКАЗ — форма расчёта стоимости
+================================================================ -->
+<section class="section" id="custom">
+  <div class="container custom__grid">
+    <div class="reveal">
+      <span class="section__tag">Индивидуальный заказ</span>
+      <h2 class="section__title">Альбом под вашу историю</h2>
+      <p class="section__lead">Расскажите, что хотите сохранить, — предложим макет, материалы и точную цену.</p>
+      <ul class="ticks">
+        <li>Подберём стиль и палитру под ваши фотографии</li>
+        <li>Покажем эскиз разворотов до начала работы</li>
+        <li>Впишем надписи, даты и цитаты от руки</li>
+      </ul>
+      <p class="custom__meta">⏱ Средний срок изготовления — 7–10 дней</p>
+    </div>
+
+    <form class="form reveal" id="customForm" novalidate>
+      <div class="field">
+        <label for="cfType">Тип альбома</label>
+        <select id="cfType" name="type">
+          <option value="Декабрьский дневник">Декабрьский дневник</option>
+          <option value="Рождественский альбом">Рождественский альбом</option>
+          <option value="Мой Новый год">Мой Новый год</option>
+          <option value="Свой вариант">Свой вариант</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label for="cfSize">Размер</label>
+        <select id="cfSize" name="size">
+          <option value="20">20 × 20 см — компакт</option>
+          <option value="25">25 × 25 см — стандарт</option>
+          <option value="30">30 × 30 см — большой</option>
+        </select>
+      </div>
+
+      <div class="field" id="cfQtyField">
+        <label for="cfQty">Количество фотографий</label>
+        <input type="number" id="cfQty" name="qty" min="10" max="300" value="50" required>
+        <p class="field__error" id="cfQtyError">Укажите число от 10 до 300</p>
+      </div>
+
+      <div class="field">
+        <label for="cfNotes">Особые пожелания</label>
+        <textarea id="cfNotes" name="notes" rows="3" placeholder="Цветовая гамма, надписи, дедлайн…"></textarea>
+      </div>
+
+      <button class="btn btn--primary btn--block" type="submit">Рассчитать стоимость</button>
+      <p class="form__hint">Ответим со сметой в течение 24 часов</p>
+    </form>
+  </div>
+</section>
+
+<!-- ================================================================
+     О НАС
+================================================================ -->
+<section class="section section--alt" id="about">
+  <div class="container about__grid">
+    <div class="reveal">
+      <div class="card__ph ph--green about__photo">
+        <svg aria-hidden="true"><use href="#i-photo"/></svg>
+      </div>
+    </div>
+    <div class="reveal">
+      <span class="section__tag">О нас</span>
+      <h2 class="section__title">Малая мастерская с большой любовью к деталям</h2>
+      <p>Мы — мастерская «Декабрьский Дневник». С 2019 года собираем альбомы вручную: режем бумагу, тонируем края, пришиваем корешки и раскладываем декор так, чтобы каждый разворот дышал зимой.</p>
+      <p>Используем плотный дизайнерский картон, хлопковую бумагу и проверенные материалы — они не желтеют и не рассыпаются, поэтому альбомы переживают не один Новый год.</p>
+      <p>Двух одинаковых альбомов у нас не существует: даже тиражные позиции собираются заново. Ваш будет точно в единственном числе.</p>
+      <div class="about__stats">
+        <div class="stat"><b>6 лет</b>мастерской</div>
+        <div class="stat"><b>500+</b>собранных альбомов</div>
+        <div class="stat"><b>100%</b>ручная работа</div>
+      </div>
+    </div>
+  </div>
+</section>
+<!-- ================================================================
+     КОЛЛЕКЦИЯ — сетка товаров
+================================================================ -->
+<section class="section" id="collection">
+  <div class="container">
+    <div class="section__head reveal">
+      <span class="section__tag">Коллекция</span>
+      <h2 class="section__title">Готовые альбомы этой зимой</h2>
+      <p class="section__lead">Каждый экземпляр собирается вручную под заказ — наличием на складе не ограничены.</p>
+    </div>
+
+    <div class="grid grid--3">
+      <article class="card product reveal">
+        <div class="card__ph ph--a"><svg aria-hidden="true"><use href="#i-photo"/></svg></div>
+        <div class="card__body">
+          <h3 class="card__title">«Тихий вечер»</h3>
+          <p class="card__text">Декабрьский дневник: 24 страницы-дня с кармашками.</p>
+          <div class="product__footer">
+            <span class="product__price">5 900 ₽</span>
+            <button class="btn btn--primary" type="button" data-add-to-cart>В корзину</button>
+          </div>
+        </div>
+      </article>
+
+      <article class="card product reveal">
+        <div class="card__ph ph--green"><svg aria-hidden="true"><use href="#i-photo"/></svg></div>
+        <div class="card__body">
+          <h3 class="card__title">«Рождество в кругу семьи»</h3>
+          <p class="card__text">Тёплый рождественский альбом на 60 фото.</p>
+          <div class="product__footer">
+            <span class="product__price">7 400 ₽</span>
+            <button class="btn btn--primary" type="button" data-add-to-cart>В корзину</button>
+          </div>
+        </div>
+      </article>
+
+      <article class="card product reveal">
+        <div class="card__ph ph--c"><svg aria-hidden="true"><use href="#i-photo"/></svg></div>
+        <div class="card__body">
+          <h3 class="card__title">«Мандариновое настроение»</h3>
+          <p class="card__text">Мини-альбом 20×20 для ярких моментов.</p>
+          <div class="product__footer">
+            <span class="product__price">4 300 ₽</span>
+            <button class="btn btn--primary" type="button" data-add-to-cart>В корзину</button>
+          </div>
+        </div>
+      </article>
+
+      <article class="card product reveal">
+        <div class="card__ph ph--b"><svg aria-hidden="true"><use href="#i-photo"/></svg></div>
+        <div class="card__body">
+          <h3 class="card__title">«Гирлянды и какао»</h3>
+          <p class="card__text">Кремовый альбом с золотым тиснением на обложке.</p>
+          <div class="product__footer">
+            <span class="product__price">6 200 ₽</span>
+            <button class="btn btn--primary" type="button" data-add-to-cart>В корзину</button>
+          </div>
+        </div>
+      </article>
+
+      <article class="card product reveal">
+        <div class="card__ph ph--a"><svg aria-hidden="true"><use href="#i-photo"/></svg></div>
+        <div class="card__body">
+          <h3 class="card__title">«Первый снег»</h3>
+          <p class="card__text">Компактный альбом на 30 фото с зимним декором.</p>
+          <div class="product__footer">
+            <span class="product__price">3 500 ₽</span>
+            <button class="btn btn--primary" type="button" data-add-to-cart>В корзину</button>
+          </div>
+        </div>
+      </article>
+
+      <article class="card product reveal">
+        <div class="card__ph ph--green"><svg aria-hidden="true"><use href="#i-photo"/></svg></div>
+        <div class="card__body">
+          <h3 class="card__title">«31-е число»</h3>
+          <p class="card__text">Большой семейный альбом на 120 фото и записей.</p>
+          <div class="product__footer">
+            <span class="product__price">8 900 ₽</span>
+            <button class="btn btn--primary" type="button" data-add-to-cart>В корзину</button>
+          </div>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ================================================================
+     ПОЧЕМУ ВЫБИРАЮТ НАС — 4 преимущества
+================================================================ -->
+<section class="section section--alt" id="why">
+  <div class="container">
+    <div class="section__head reveal">
+      <span class="section__tag">Почему выбирают нас</span>
+      <h2 class="section__title">Ценное — в деталях</h2>
+    </div>
+
+    <div class="grid grid--2">
+      <div class="feature reveal">
+        <div class="feature__icon"><svg aria-hidden="true"><use href="#i-heart"/></svg></div>
+        <h3>Ручная работа</h3>
+        <p>Каждый разворот собираем вручную — никаких печатных шаблонов и потока.</p>
+      </div>
+      <div class="feature reveal">
+        <div class="feature__icon"><svg aria-hidden="true"><use href="#i-leaf"/></svg></div>
+        <h3>Экологичные материалы</h3>
+        <p>Переработанный картон, хлопковая бумага и клей без резкого запаха.</p>
+      </div>
+      <div class="feature reveal">
+        <div class="feature__icon"><svg aria-hidden="true"><use href="#i-pencil"/></svg></div>
+        <h3>Индивидуальный заказ</h3>
+        <p>Размер, палитра и декор — под вашу историю и ваши фотографии.</p>
+      </div>
+      <div class="feature reveal">
+        <div class="feature__icon"><svg aria-hidden="true"><use href="#i-gift"/></svg></div>
+        <h3>Подарочная упаковка</h3>
+        <p>Крафт-коробка, атласная лента и рукописная открытка — бесплатно.</p>
+      </div>
+    </div>
+  </div>
+</section>
+<!-- ================================================================
+     КАК ЭТО РАБОТАЕТ — 3 шага
+================================================================ -->
+<section class="section steps" id="how">
+  <div class="container">
+    <div class="section__head reveal">
+      <span class="section__tag">Как это работает</span>
+      <h2 class="section__title">От идеи до доставки — три шага</h2>
+    </div>
+
+    <div class="grid grid--3">
+      <div class="step reveal">
+        <div class="step__num">01</div>
+        <h3>Выбор</h3>
+        <p>Выберите готовый альбом из коллекции или пришлите пожелания — соберём индивидуальный макет.</p>
+      </div>
+      <div class="step reveal">
+        <div class="step__num">02</div>
+        <h3>Согласование</h3>
+        <p>Утверждаем эскиз, смету и сроки. Предоплата 50%, остальное — после фото готового альбома.</p>
+      </div>
+      <div class="step reveal">
+        <div class="step__num">03</div>
+        <h3>Доставка</h3>
+        <p>Бережно упаковываем и отправляем по всей России. В Москве — курьером в день готовности.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================================================================
+     ОТЗЫВЫ
+================================================================ -->
+<section class="section section--alt" id="reviews">
+  <div class="container">
+    <div class="section__head reveal">
+      <span class="section__tag">Отзывы</span>
+      <h2 class="section__title">Что говорят наши покупатели</h2>
+    </div>
+
+    <div class="grid grid--3">
+      <figure class="review reveal">
+        <span class="review__stars" aria-label="Оценка: 5 из 5">★★★★★</span>
+        <blockquote class="review__text">
+          <p>«Подарила маме декабрьский дневник — теперь каждый вечер вклеиваем по фото вместе. Лучшая традиция года.»</p>
+        </blockquote>
+        <figcaption class="review__author">
+          <span class="review__ava" aria-hidden="true">А</span>
+          <span><span class="review__name">Алина, 26</span><br><span class="review__meta">Москва</span></span>
+        </figcaption>
+      </figure>
+
+      <figure class="review reveal">
+        <span class="review__stars" aria-label="Оценка: 5 из 5">★★★★★</span>
+        <blockquote class="review__text">
+          <p>«Заказывал альбом для девушки: помогли с макетом, учли все пожелания и доставили за неделю.»</p>
+        </blockquote>
+        <figcaption class="review__author">
+          <span class="review__ava" aria-hidden="true">М</span>
+          <span><span class="review__name">Марк, 29</span><br><span class="review__meta">Санкт-Петербург</span></span>
+        </figcaption>
+      </figure>
+
+      <figure class="review reveal">
+        <span class="review__stars" aria-label="Оценка: 5 из 5">★★★★★</span>
+        <blockquote class="review__text">
+          <p>«Бумага плотная, декор не осыпается. Альбом пахнет зимой — уже коплю на второй к Новому году.»</p>
+        </blockquote>
+        <figcaption class="review__author">
+          <span class="review__ava" aria-hidden="true">Д</span>
+          <span><span class="review__name">Даша, 24</span><br><span class="review__meta">Казань</span></span>
+        </figcaption>
+      </figure>
+    </div>
+  </div>
+</section>
+<!-- ================================================================
+     КОНТАКТЫ + форма обратной связи
+================================================================ -->
+<section class="section" id="contacts">
+  <div class="container contacts__grid">
+    <div class="reveal">
+      <span class="section__tag">Контакты</span>
+      <h2 class="section__title">Напишите нам — ответим быстро</h2>
+      <p class="section__lead">Обычно отвечаем в течение пары часов в рабочее время.</p>
+      <ul class="contacts__list">
+        <li>
+          <svg aria-hidden="true"><use href="#i-phone"/></svg>
+          <span><strong>Телефон:</strong> <a href="tel:+79150000000">+7 (915) 000-00-00</a></span>
+        </li>
+        <li>
+          <svg aria-hidden="true"><use href="#i-mail"/></svg>
+          <span><strong>E-mail:</strong> <a href="mailto:hello@december-diary.ru">hello@december-diary.ru</a></span>
+        </li>
+        <li>
+          <svg aria-hidden="true"><use href="#i-pin"/></svg>
+          <span><strong>Город:</strong> Москва, мастерская у м. «Электрозаводская»</span>
+        </li>
+        <li>
+          <svg aria-hidden="true"><use href="#i-clock"/></svg>
+          <span><strong>Часы работы:</strong> пн–сб, 10:00–20:00</span>
+        </li>
+      </ul>
+    </div>
+
+    <form class="form reveal" id="contactForm" novalidate>
+      <div class="field" id="cNameField">
+        <label for="cName">Имя</label>
+        <input type="text" id="cName" name="name" autocomplete="name" placeholder="Как к вам обращаться?" required>
+        <p class="field__error">Введите имя (минимум 2 символа)</p>
+      </div>
+
+      <div class="field" id="cEmailField">
+        <label for="cEmail">E-mail</label>
+        <input type="email" id="cEmail" name="email" autocomplete="email" placeholder="you@example.com" required>
+        <p class="field__error">Введите корректный e-mail</p>
+      </div>
+
+      <div class="field" id="cMsgField">
+        <label for="cMsg">Сообщение</label>
+        <textarea id="cMsg" name="message" rows="4" placeholder="Расскажите, какой альбом ищете…" required></textarea>
+        <p class="field__error">Напишите пару слов о вашем запросе</p>
+      </div>
+
+      <button class="btn btn--primary btn--block" type="submit">Отправить</button>
+      <p class="form__status" id="contactStatus" role="status">Спасибо, мы получили ваше сообщение</p>
+    </form>
+  </div>
+</section>
+</main>
+
+<!-- ================================================================
+     ФУТЕР
+================================================================ -->
+<footer class="footer">
+  <div class="container footer__grid">
+    <div class="footer__brand">
+      <svg viewBox="0 0 40 40" aria-hidden="true">
+        <rect x="4" y="7" width="32" height="26" rx="5" fill="#1F6B4B"/>
+        <rect x="8" y="11" width="24" height="18" rx="3" fill="#F7FAF9"/>
+        <path d="M20 14l1.8 3.6 4 .6-2.9 2.8.7 4-3.6-1.9-3.6 1.9.7-4-2.9-2.8 4-.6z" fill="#D4A62E"/>
+      </svg>
+      <div>
+        Декабрьский Дневник
+        <p class="footer__tag">Скрапбукинг-альбомы ручной работы</p>
+      </div>
+    </div>
+
+    <nav class="footer__social" aria-label="Мы в соцсетях">
+      <a href="#" aria-label="Telegram (заглушка)">Telegram</a>
+      <a href="#" aria-label="VK (заглушка)">VK</a>
+      <a href="#" aria-label="Pinterest (заглушка)">Pinterest</a>
+    </nav>
+
+    <div class="footer__legal">
+      <a class="footer__link" href="#">Политика конфиденциальности</a>
+      <p class="footer__copy">© <span id="year">2026</span> Декабрьский Дневник. Все альбомы сделаны с теплом.</p>
+    </div>
+  </div>
+</footer>
+
+<!-- ================================================================
+     МОДАЛЬНОЕ ОКНО (после отправки формы заказа)
+================================================================ -->
+<div class="modal" id="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+  <div class="modal__backdrop" data-close-modal></div>
+  <div class="modal__box">
+    <button class="modal__close" type="button" data-close-modal aria-label="Закрыть окно">✕</button>
+    <div class="modal__icon"><svg aria-hidden="true"><use href="#i-check"/></svg></div>
+    <h3 id="modalTitle">Спасибо, мы свяжемся с вами в течение 24 часов</h3>
+    <p class="section__lead">Мы уже изучаем ваш запрос и подготовим смету с вариантами оформления.</p>
+    <button class="btn btn--primary" type="button" data-close-modal>Хорошо</button>
+  </div>
+</div>
+<script>
+(function(){
+  'use strict';
+
+  /* ------------------------------------------------------------
+     1 · МОБИЛЬНОЕ МЕНЮ
+  ------------------------------------------------------------ */
+  var header = document.querySelector('.header');
+  var burger = document.getElementById('burger');
+  var nav = document.getElementById('nav');
+
+  burger.addEventListener('click', function () {
+    var open = header.classList.toggle('header--open');
+    burger.setAttribute('aria-expanded', open ? 'true' : 'false');
+  });
+
+  // закрываем меню после выбора пункта (важно на мобильных)
+  nav.addEventListener('click', function (e) {
+    if (e.target.tagName === 'A') {
+      header.classList.remove('header--open');
+      burger.setAttribute('aria-expanded', 'false');
+    }
+  });
+
+  /* ------------------------------------------------------------
+     2 · ПЛАВНОЕ ПОЯВЛЕНИЕ СЕКЦИЙ ПРИ СКРОЛЛЕ
+  ------------------------------------------------------------ */
+  var items = document.querySelectorAll('.reveal');
+
+  // лёгкая «лесенка» карточек внутри одной сетки
+  document.querySelectorAll('.grid').forEach(function (grid) {
+    grid.querySelectorAll('.reveal').forEach(function (el, i) {
+      el.style.transitionDelay = (i % 3) * 90 + 'ms';
+    });
+  });
+
+  if ('IntersectionObserver' in window) {
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('reveal--visible');
+          io.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.15, rootMargin: '0px 0px -40px 0px' });
+    items.forEach(function (el) { io.observe(el); });
+  } else {
+    items.forEach(function (el) { el.classList.add('reveal--visible'); });
+  }
+
+  /* ------------------------------------------------------------
+     3 · КОРЗИНА (имитация для демо)
+  ------------------------------------------------------------ */
+  var cartCount = 0;
+  var cartCountEl = document.getElementById('cartCount');
+
+  document.querySelectorAll('[data-add-to-cart]').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      cartCount++;
+      cartCountEl.textContent = cartCount;
+      btn.textContent = 'В корзине ✓';
+      btn.classList.add('btn--added');
+      btn.disabled = true;
+      setTimeout(function () {
+        btn.textContent = 'В корзину';
+        btn.classList.remove('btn--added');
+        btn.disabled = false;
+      }, 1600);
+    });
+  });
+
+  /* ------------------------------------------------------------
+     4 · МОДАЛЬНОЕ ОКНО
+  ------------------------------------------------------------ */
+  var modal = document.getElementById('modal');
+  var lastFocused = null;
+
+  function openModal() {
+    lastFocused = document.activeElement;
+    modal.classList.add('modal--open');
+    document.body.style.overflow = 'hidden';
+    modal.querySelector('.modal__close').focus();
+  }
+
+  function closeModal() {
+    modal.classList.remove('modal--open');
+    document.body.style.overflow = '';
+    if (lastFocused) lastFocused.focus();
+  }
+
+  modal.querySelectorAll('[data-close-modal]').forEach(function (el) {
+    el.addEventListener('click', closeModal);
+  });
+
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape' && modal.classList.contains('modal--open')) closeModal();
+  });
+
+  /* ------------------------------------------------------------
+     5 · ВАЛИДАЦИЯ ФОРМ
+  ------------------------------------------------------------ */
+  var EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+
+  function setError(fieldId, hasError) {
+    document.getElementById(fieldId).classList.toggle('field--error', hasError);
+    return hasError;
+  }
+
+  /* «Индивидуальный заказ»: проверяем количество фотографий */
+  var customForm = document.getElementById('customForm');
+
+  customForm.addEventListener('submit', function (e) {
+    e.preventDefault();
+    var qty = parseInt(document.getElementById('cfQty').value, 10);
+    var invalid = setError('cfQtyField', !(qty >= 10 && qty <= 300));
+
+    if (!invalid) {
+      openModal();          // «Спасибо, мы свяжемся с вами…»
+      customForm.reset();
+    }
+  });
+
+  document.getElementById('cfQty').addEventListener('input', function () {
+    document.getElementById('cfQtyField').classList.remove('field--error');
+  });
+
+  /* Обратная связь: имя + e-mail + сообщение */
+  var contactForm = document.getElementById('contactForm');
+  var status = document.getElementById('contactStatus');
+
+  contactForm.addEventListener('submit', function (e) {
+    e.preventDefault();
+    var name = document.getElementById('cName').value.trim();
+    var email = document.getElementById('cEmail').value.trim();
+    var msg = document.getElementById('cMsg').value.trim();
+
+    var bad = false;
+    bad = setError('cNameField', name.length < 2) || bad;
+    bad = setError('cEmailField', !EMAIL_RE.test(email)) || bad;
+    bad = setError('cMsgField', msg.length < 2) || bad;
+
+    if (!bad) {
+      contactForm.reset();
+      status.classList.add('form__status--ok');   // «Спасибо, мы получили ваше сообщение»
+      setTimeout(function () { status.classList.remove('form__status--ok'); }, 8000);
+    }
+  });
+
+  ['cName', 'cEmail', 'cMsg'].forEach(function (id) {
+    document.getElementById(id).addEventListener('input', function () {
+      this.closest('.field').classList.remove('field--error');
+    });
+  });
+
+  /* ------------------------------------------------------------
+     6 · АКТУАЛЬНЫЙ ГОД В ФУТЕРЕ
+  ------------------------------------------------------------ */
+  document.getElementById('year').textContent = new Date().getFullYear();
+})();
+</script>
+<!-- ================================================================
+     README (кратко)
+     1. Запуск: просто откройте index.html двойным кликом в любом
+        современном браузере — сервер и сборка не нужны, файл
+        полностью автономен (без внешних библиотек и CDN).
+     2. Структура: <style> — токены и стили по секциям; далее
+        разметка секций (герой → идеи → заказ → о нас → коллекция →
+        почему мы → шаги → отзывы → контакты → футер); в конце —
+        <script> с меню, корзиной, модальным окном и валидацией.
+     3. Что можно доработать:
+        · подключить реальную корзину и оплату (ЮKassa/CloudPayments);
+        · перенести товары и заявки в CMS (WordPress/Headless);
+        · заменить фото-заглушки (svg #i-photo) на реальные снимки;
+        · добавить SEO/аналитику (meta OG, Яндекс.Метрика);
+        · вынести стили и скрипт в отдельные файлы при росте проекта.
+================================================================ -->
+</body>
+</html>
